@@ -27,6 +27,10 @@ import sqlite3
 conn = sqlite3.connect("teatchers.db")
 cursor = conn.cursor()
 
+#Удаление таблицы, если она уже есть
+cursor.execute('''
+DROP TABLE IF EXISTS Students
+''')
 # Создание таблицы Students
 cursor.execute('''
 CREATE TABLE Students (
