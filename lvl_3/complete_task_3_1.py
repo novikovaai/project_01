@@ -1,22 +1,25 @@
 class matrix:
+
     def __init__(self, row=1, col=1, value=None): #По умолчанию в матрице 1 столбец, 1 колонка и значение None
-        if (isinstance(value, int) or value == None) and 0 < col < 100 and 0 < row < 100: #Принимается либо целое число, либо None, размер до 99 включительно
+        if (isinstance(value, int) and value < 1000 or value is None) and 0 < col < 100 and 0 < row < 100: #Принимается либо целое число, либо None, размер до 99 включительно
             self.matrix = [[value]*col for _ in range(row)]
             self.col = col
             self.row = row
         else:
             raise ValueError('Введенные данные некорректны')
+
     def set_value(self, value, row=0, col=0): #Изменение любой ячейки матрицы с заданием ее местоположения, по умолчанию - первой
-        if (isinstance(value, int) or value == None) and col <= self.col and row <= self.row: #Проверка, что значение подходит и не выходит за границы индексов
+        if (isinstance(value, int) and value < 1000 or value is None) and col <= self.col and row <= self.row: #Проверка, что значение подходит и не выходит за границы индексов
             self.matrix[row][col] = value
-        elif not isinstance(value, int) and value != None:
-            raise ValueError('Введенные данные некорректны, value должно быть целым числом или None')
+        elif (not isinstance(value, int) or value > 999) and value is not None:
+            raise ValueError('Введенные данные некорректны, value должно быть целым числом до 999 включительно или None')
         elif col > self.col or row > self.row:
             raise ValueError('Неправильный индекс, размер матрицы меньше введенных значений')
         else:
             raise ValueError('Произошла ошибка при выполнении запроса')
+
     def set_row(self, spisok, row=0): #Изменение или добавление строчки в виде списка, по умолчанию изменяется первая
-        if isinstance(spisok, list) and all(map(lambda x : type(x) == int or x == None, spisok)) and isinstance(row, int): #Проверка правильности данных
+        if isinstance(spisok, list) and all(map(lambda x : type(x) == int and x < 1000 or x is None, spisok)) and isinstance(row, int): #Проверка правильности данных
             if len(spisok) < self.col: #Если длина списка меньше, чем длина других строчек (количество колонок)
                 diff = self.col - len(spisok)
                 spisok_add = spisok[:] + [None]*diff #К списку добавляются None в недостающем количестве
@@ -34,12 +37,13 @@ class matrix:
             raise ValueError('Введенные данные некорректны, требуется объект класса list')
         elif not isinstance(row, int):
             raise ValueError('Введенные данные некорректны, row должен быть целым числом')
-        elif not all(map(lambda x : type(x) == int or x == None, spisok)):
-            raise ValueError('Все объекты в списке должны быть целыми числами либо None')
+        elif not all(map(lambda x : type(x) == int and x < 1000 or x is None, spisok)):
+            raise ValueError('Все объекты в списке должны быть целыми числами до 999 включительно либо None')
         else:
             raise ValueError('Произошла ошибка при выполнении запроса')
+
     def set_col(self, spisok, col=0): #Изменение или добавление колонки в виде списка, по умолчанию изменяется первая
-        if isinstance(spisok, list) and all(map(lambda x : type(x) == int or x == None, spisok)) and isinstance(col, int): #Проверка правильности данных
+        if isinstance(spisok, list) and all(map(lambda x : type(x) == int and x < 1000 or x is None, spisok)) and isinstance(col, int): #Проверка правильности данных
             if len(spisok) < self.row: #Если длина списка меньше, чем длина других колонок (количество строчек)
                 diff = self.row - len(spisok)
                 spisok_add = spisok[:] + [None]*diff #К списку добавляются None в недостающем количестве
@@ -59,19 +63,51 @@ class matrix:
             raise ValueError('Введенные данные некорректны, требуется объект класса list')
         elif not isinstance(col, int):
             raise ValueError('Введенные данные некорректны, row должен быть целым числом')
-        elif not all(map(lambda x : type(x) == int or x == None, spisok)):
-            raise ValueError('Все объекты в списке должны быть целыми числами либо None')
+        elif not all(map(lambda x : type(x) == int and x < 1000 or x is None, spisok)):
+            raise ValueError('Все объекты в списке должны быть целыми числами до 999 включительно либо None')
         else:
             raise ValueError('Произошла ошибка при выполнении запроса')
+
     def print_matrix(self): #Вывод матрицы
         for i in range(self.row):
             for j in range(self.col):
                 print(str(self.matrix[i][j]).center(4), end='') #На каждую ячейку по 4 символа, чтобы None отображалось красиво
             print()
+
     def stats(self):
         print(f'Число столбцов: {self.col}, число строк: {self.row}') #Вывод размерности матрицы
 
-#Проверяем
+#Проверяем отработку ошибок
+
+#print('Попытка сделать матрицу из строковых значений')
+#matrix0 = matrix(5, 5, 'a')
+#matrix0.print_matrix()
+
+#print('Попытка сделать слишком большую матрицу')
+#matrix0 = matrix(5, 255, 0)
+#matrix0.print_matrix()
+
+#print('Попытка добавить неверное значение')
+#matrix0 = matrix(5, 5, 0)
+#matrix0.set_value(1000)
+#matrix0.print_matrix()
+
+#print('Попытка добавить значение мимо индекса')
+#matrix0 = matrix(5, 5, 0)
+#matrix0.set_value(3, 7, 7)
+#matrix0.print_matrix()
+
+#print('Попытка добавить строчку не списком, а кортежем')
+#matrix0 = matrix(5, 5, 0)
+#matrix0.set_row((10, 11, 15), 5)
+#matrix0.print_matrix()
+
+#print('Попытка добавить список, содержащий неверные значения')
+#matrix0 = matrix(5, 5, 0)
+#matrix0.set_row([1, 7, None, 't'])
+#matrix0.print_matrix()
+
+#Проверяем правильность
 print('Матрица 7x7 заполненная нулями')
 matrix1 = matrix(7, 7, 0)
 matrix1.print_matrix()
@@ -104,7 +140,7 @@ matrix1.set_col([71, 41, 91, 81, 111, 213, 14, 91, 1], 3)
 matrix1.print_matrix()
 print()
 print('Добавление колонки')
-matrix1.set_col([71, 42, 39, 48, 111, 234, 44], 50)
+matrix1.set_col([71, 42, 39, 48, 111, None, 44, 5], 50)
 matrix1.print_matrix()
 print()
 print('Вывод нового размера матрицы')
